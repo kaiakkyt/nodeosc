@@ -1,0 +1,432 @@
+/* =====================================================
+   NodeOSC — Panel & Oscillator Card Styles
+   ===================================================== */
+
+/* ---------- Generic Panel ---------- */
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.panel-header {
+  background: var(--bg-panel2);
+  border-bottom: 1px solid var(--border);
+  padding: 0.45em 0.75em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+  flex-wrap: wrap;
+  user-select: none;
+}
+
+.panel-body {
+  padding: 0.65em 0.75em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
+/* ---------- Oscillator card ---------- */
+.osc-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.osc-card.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent) inset;
+}
+
+.osc-card.muted {
+  opacity: 0.45;
+}
+
+/* Card header */
+.osc-header {
+  background: var(--bg-panel2);
+  border-bottom: 1px solid var(--border);
+  padding: 0.4em 0.6em;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  flex-wrap: wrap;
+}
+
+.osc-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text);
+  flex: 1;
+  min-width: 60px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.osc-header-btns {
+  display: flex;
+  gap: 0.3em;
+  flex-shrink: 0;
+}
+
+.btn-osc-mute, .btn-osc-solo, .btn-osc-remove {
+  border: none;
+  border-radius: 4px;
+  padding: 0.2em 0.5em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s, background 0.15s;
+}
+.btn-osc-mute   { background: var(--border);  color: var(--text-dim); }
+.btn-osc-solo   { background: var(--border);  color: var(--text-dim); }
+.btn-osc-remove { background: transparent;    color: var(--text-dim); }
+
+.btn-osc-mute.on  { background: var(--accent2); color: #fff; }
+.btn-osc-solo.on  { background: var(--accent3); color: #111; }
+.btn-osc-remove:hover { color: var(--danger); }
+
+/* Card body grid */
+.osc-body {
+  padding: 0.6em 0.7em;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6em;
+  align-items: start;
+}
+
+/* Waveform picker */
+.waveform-picker {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.35em;
+  flex-wrap: wrap;
+}
+
+.wave-btn {
+  flex: 1;
+  min-width: 2.4em;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-dim);
+  border-radius: 5px;
+  padding: 0.3em 0.1em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.wave-btn:hover { border-color: var(--accent); color: var(--accent); }
+.wave-btn.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Wave SVG previews in buttons */
+.wave-btn svg {
+  display: block;
+  margin: 0 auto 1px;
+  pointer-events: none;
+}
+
+/* Colour accent strip at top of card */
+.osc-card::before {
+  content: '';
+  display: block;
+  height: 3px;
+  background: var(--osc-color, var(--accent));
+  flex-shrink: 0;
+}
+
+/* ---------- Visualizer panel sizing ---------- */
+.panel-visualizer .panel-header { flex-shrink: 0; }
+
+.viz-controls {
+  display: flex;
+  gap: 0.3em;
+}
+
+.viz-btn {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  border-radius: 4px;
+  padding: 0.2em 0.55em;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.viz-btn:hover, .viz-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ---------- Section row (2-col grid in osc body) ---------- */
+.osc-section-full { grid-column: 1 / -1; }
+
+/* ---------- Oscillator colour palette ---------- */
+.osc-card:nth-child(6n+1) { --osc-color: #5b8fff; }
+.osc-card:nth-child(6n+2) { --osc-color: #a855f7; }
+.osc-card:nth-child(6n+3) { --osc-color: #22d3a0; }
+.osc-card:nth-child(6n+4) { --osc-color: #f59e0b; }
+.osc-card:nth-child(6n+5) { --osc-color: #f43f5e; }
+.osc-card:nth-child(6n+6) { --osc-color: #06b6d4; }
+
+/* ---------- Empty state ---------- */
+.osc-empty {
+  grid-column: 1 / -1;
+  padding: 2em;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  pointer-events: none;
+}
+
+/* =====================================================
+   PIANO ROLL
+   ===================================================== */
+
+.panel-pianoroll {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+/* Toolbar in panel header */
+.pr-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+  flex-wrap: wrap;
+}
+
+.pr-select {
+  width: auto;
+  padding: 0.18em 0.4em;
+  font-size: 0.72rem;
+}
+
+.pr-btn {
+  padding: 0.18em 0.55em;
+  font-size: 0.78rem;
+  line-height: 1;
+}
+
+.pr-btn-danger:hover { color: var(--danger); border-color: var(--danger); }
+.pr-btn.pr-active    { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+
+/* Roll body */
+.pr-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Left label column */
+.pr-labels {
+  width: 44px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--bg-panel2);
+  border-right: 1px solid var(--border);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* scrolled in sync with grid via JS */
+}
+
+.pr-key-label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 5px;
+  font-size: 0.6rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
+  border-bottom: 1px solid transparent;
+  flex-shrink: 0;
+  user-select: none;
+  cursor: pointer;
+  transition: background 0.1s;
+  box-sizing: border-box;
+}
+.pr-key-label:hover { background: rgba(91,143,255,0.15); color: var(--text); }
+.pr-key-label.is-c  { color: var(--accent); border-bottom-color: var(--border); font-weight: 700; }
+.pr-key-label.is-black { background: rgba(0,0,0,0.18); }
+.pr-key-label.out-of-scale { opacity: 0.32; background: rgba(244,63,94,0.08); }
+.pr-key-label.out-of-scale.is-black { background: rgba(244,63,94,0.14); }
+
+/* Toolbar separator */
+.pr-sep {
+  display: inline-block;
+  width: 1px;
+  height: 1.1em;
+  background: var(--border);
+  flex-shrink: 0;
+  align-self: center;
+  margin: 0 0.1em;
+}
+
+/* Scroll wrapper for the canvas */
+.pr-scroll-wrap {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+  cursor: crosshair;
+  background: #13161e; /* match canvas C_BG so area below canvas is seamless */
+}
+
+#pr-canvas {
+  display: block;
+  position: sticky;
+  left: 0;
+  /* width/height set by JS */
+}
+
+/* Playhead overlay (drawn on canvas, not a DOM element) */
+
+/* ---- Velocity lane ---- */
+.pr-vel-row {
+  display: flex;
+  flex-shrink: 0;
+  min-height: 72px;
+  border-top: 1px solid var(--border);
+  background: #0e1018;
+}
+
+.pr-vel-label {
+  width: 44px;
+  flex-shrink: 0;
+  background: var(--bg-panel2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.pr-vel-scroll {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  cursor: ns-resize;
+  background: #0e1018;
+}
+
+#pr-vel-canvas {
+  display: block;
+}
+
+/* ---- Note inspector bar ---- */
+.pr-inspector {
+  align-items: center;
+  gap: 1em;
+  padding: 0.28em 0.75em;
+  background: var(--bg-panel2);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.72rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.pr-insp-count {
+  color: var(--text-dim);
+  min-width: 3.5em;
+  font-variant-numeric: tabular-nums;
+}
+
+.pr-insp-field {
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+  cursor: default;
+}
+
+.pr-insp-lbl {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+}
+
+.pr-insp-note-name {
+  color: var(--accent);
+  font-weight: 600;
+  min-width: 2.6em;
+  font-variant-numeric: tabular-nums;
+}
+
+.pr-insp-num {
+  width: 4.8em;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 0.72rem;
+  padding: 0.15em 0.35em;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.pr-insp-num:focus { outline: none; border-color: var(--accent); }
+.pr-insp-num::-webkit-inner-spin-button,
+.pr-insp-num::-webkit-outer-spin-button { -webkit-appearance: none; }
+.pr-insp-num[type=number] { -moz-appearance: textfield; }
+
+/* ---- Custom waveform editor ---- */
+.custom-wave-editor {
+  display: none;
+  padding: 0.35em 0 0.25em;
+}
+
+.custom-wave-canvas {
+  display: block;
+  width: 100%;
+  height: 72px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  cursor: crosshair;
+  box-sizing: border-box;
+  touch-action: none;
+}
+
+.custom-wave-presets {
+  display: flex;
+  gap: 0.25em;
+  margin-top: 0.3em;
+}
+
+.cwp-btn {
+  flex: 1;
+  padding: 0.12em 0.3em;
+  font-size: 0.68rem;
+}

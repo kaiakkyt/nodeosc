@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NodeOSC - Oscillator Generator</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/panel.css" />
+  <!-- Loading screen — must be first so it fires before <body> exists -->
+  <script src="javascript/loading.js"></script>
+</head>
+<body>
+
+  <header class="topbar">
+    <span class="app-title">NodeOSC</span>
+    <div class="topbar-controls">
+      <button id="btn-add-osc" class="btn-primary">+ Add Oscillator</button>
+      <button id="btn-save-project" class="btn-ghost" title="Save project as .noscproj">&#128190; Save</button>
+      <button id="btn-load-project" class="btn-ghost" title="Load a .noscproj file">&#128193; Load</button>
+    </div>
+  </header>
+
+  <main class="app-layout">
+
+    <aside class="sidebar" id="sidebar-master">
+
+      <section class="panel" id="panel-master">
+        <div class="panel-header">Master</div>
+        <div class="panel-body">
+          <label class="knob-label">Volume
+            <input type="range" id="master-vol" class="knob-slider" min="0" max="1" step="0.01" value="0.7" />
+            <span class="knob-value" id="master-vol-val">70%</span>
+          </label>
+          <label class="knob-label">BPM
+            <div class="bpm-row">
+              <input type="range" id="master-bpm" class="knob-slider bpm-slider" min="40" max="240" step="1" value="120" />
+              <input type="number" id="master-bpm-num" class="bpm-num-input" min="40" max="240" step="1" value="120" />
+            </div>
+            <button id="btn-tap-tempo" class="btn-ghost btn-tap">Tap</button>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-filter">
+        <div class="panel-header">Global Filter</div>
+        <div class="panel-body">
+          <label class="knob-label">Type
+            <select id="filter-type" class="select-input">
+              <option value="lowpass">Low Pass</option>
+              <option value="highpass">High Pass</option>
+              <option value="bandpass">Band Pass</option>
+              <option value="notch">Notch</option>
+              <option value="allpass">All Pass</option>
+            </select>
+          </label>
+          <label class="knob-label">Cutoff
+            <input type="range" id="filter-freq" class="knob-slider" min="20" max="20000" step="10" value="8000" />
+            <span class="knob-value" id="filter-freq-val">8000 Hz</span>
+          </label>
+          <label class="knob-label">Resonance
+            <input type="range" id="filter-q" class="knob-slider" min="0.1" max="30" step="0.1" value="1" />
+            <span class="knob-value" id="filter-q-val">1.0</span>
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="filter-bypass" /> Bypass
+          </label>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-reverb">
+        <div class="panel-header">Reverb</div>
+        <div class="panel-body">
+          <label class="knob-label">Mix
+            <input type="range" id="reverb-mix" class="knob-slider" min="0" max="1" step="0.01" value="0.15" />
+            <span class="knob-value" id="reverb-mix-val">15%</span>
+          </label>
+          <label class="knob-label">Size
+            <input type="range" id="reverb-size" class="knob-slider" min="0.1" max="5" step="0.05" value="1.5" />
+            <span class="knob-value" id="reverb-size-val">1.50</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-delay">
+        <div class="panel-header">Delay</div>
+        <div class="panel-body">
+          <label class="knob-label">Time
+            <input type="range" id="delay-time" class="knob-slider" min="0" max="1" step="0.01" value="0.25" />
+            <span class="knob-value" id="delay-time-val">0.25 s</span>
+          </label>
+          <label class="knob-label">Feedback
+            <input type="range" id="delay-fb" class="knob-slider" min="0" max="0.95" step="0.01" value="0.3" />
+            <span class="knob-value" id="delay-fb-val">30%</span>
+          </label>
+          <label class="knob-label">Mix
+            <input type="range" id="delay-mix" class="knob-slider" min="0" max="1" step="0.01" value="0.2" />
+            <span class="knob-value" id="delay-mix-val">20%</span>
+          </label>
+        </div>
+      </section>
+
+    </aside>
+
+    <div class="centre-col">
+
+      <section class="panel panel-pianoroll" id="panel-pianoroll">
+        <div class="panel-header">
+          Piano Roll
+          <div class="pr-toolbar">
+            <button id="pr-tool-draw"   class="btn-ghost pr-btn pr-active" title="Draw tool — click to place notes">&#9999; Draw</button>
+            <button id="pr-tool-select" class="btn-ghost pr-btn"           title="Select tool — drag to multi-select">&#9632; Sel</button>
+            <span class="pr-sep"></span>
+            <select id="pr-snap" class="select-input pr-select" title="Snap">
+              <option value="0.25">1/16</option>
+              <option value="0.5" selected>1/8</option>
+              <option value="1">1/4</option>
+              <option value="2">1/2</option>
+              <option value="4">1 bar</option>
+            </select>
+            <select id="pr-bars" class="select-input pr-select" title="Length">
+              <option value="2">2 bars</option>
+              <option value="4" selected>4 bars</option>
+              <option value="8">8 bars</option>
+              <option value="16">16 bars</option>
+              <option value="32">32 bars</option>
+              <option value="64">64 bars</option>
+            </select>
+            <span class="pr-sep"></span>
+            <select id="pr-root" class="select-input pr-select" title="Scale Root">
+              <option value="0">C</option>
+              <option value="1">C#</option>
+              <option value="2">D</option>
+              <option value="3">D#</option>
+              <option value="4">E</option>
+              <option value="5">F</option>
+              <option value="6">F#</option>
+              <option value="7">G</option>
+              <option value="8">G#</option>
+              <option value="9">A</option>
+              <option value="10">A#</option>
+              <option value="11">B</option>
+            </select>
+            <select id="pr-scale" class="select-input pr-select" title="Scale">
+              <option value="none">No Scale</option>
+              <option value="major">Major</option>
+              <option value="minor">Natural Minor</option>
+              <option value="harmonic-minor">Harmonic Minor</option>
+              <option value="pentatonic-major">Penta. Major</option>
+              <option value="pentatonic-minor">Penta. Minor</option>
+              <option value="blues">Blues</option>
+              <option value="dorian">Dorian</option>
+              <option value="phrygian">Phrygian</option>
+              <option value="lydian">Lydian</option>
+              <option value="mixolydian">Mixolydian</option>
+            </select>
+            <span class="pr-sep"></span>
+            <button id="pr-play"  class="btn-ghost pr-btn" title="Play / Stop (Space)">&#9654; Play</button>
+            <button id="pr-loop"  class="btn-ghost pr-btn" title="Loop">&#8635;</button>
+            <button id="pr-follow" class="btn-ghost pr-btn pr-active" title="Follow playhead (auto-scroll)">&#8680; Follow</button>
+            <button id="pr-clear" class="btn-ghost pr-btn pr-btn-danger" title="Clear all">&#128465;</button>
+            <span class="pr-sep"></span>
+            <button id="btn-import-midi" class="btn-ghost pr-btn" title="Import a MIDI file into the piano roll">&#8657; MIDI</button>
+            <button id="btn-export-midi" class="btn-ghost pr-btn" title="Export as MIDI file">&#8659; MIDI</button>
+            <button id="btn-export-wav"  class="btn-ghost pr-btn" title="Export rendered audio as WAV">&#8659; WAV</button>
+          </div>
+        </div>
+        <div id="pr-inspector" class="pr-inspector" style="display:none">
+          <span id="pr-insp-count" class="pr-insp-count"></span>
+          <label class="pr-insp-field">
+            <span class="pr-insp-lbl">NOTE</span>
+            <span id="pr-insp-note-name" class="pr-insp-note-name">—</span>
+            <input id="pr-insp-midi" type="number" class="pr-insp-num" min="36" max="119" step="1" title="MIDI pitch (36–119)" />
+          </label>
+          <label class="pr-insp-field">
+            <span class="pr-insp-lbl">BEAT</span>
+            <input id="pr-insp-beat" type="number" class="pr-insp-num" min="0" step="0.25" title="Start beat" />
+          </label>
+          <label class="pr-insp-field">
+            <span class="pr-insp-lbl">DUR</span>
+            <input id="pr-insp-dur" type="number" class="pr-insp-num" min="0.0625" step="0.25" title="Duration in beats" />
+          </label>
+          <label class="pr-insp-field">
+            <span class="pr-insp-lbl">VEL</span>
+            <input id="pr-insp-vel" type="number" class="pr-insp-num" min="1" max="127" step="1" title="Velocity (1–127)" />
+          </label>
+        </div>
+        <div class="pr-container">
+          <div id="pr-labels" class="pr-labels"></div>
+          <div class="pr-scroll-wrap" id="pr-scroll-wrap">
+            <canvas id="pr-canvas"></canvas>
+          </div>
+        </div>
+        <div class="pr-vel-row">
+          <div class="pr-vel-label">VEL</div>
+          <div class="pr-vel-scroll" id="pr-vel-scroll">
+            <canvas id="pr-vel-canvas"></canvas>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <aside class="sidebar" id="sidebar-env">
+
+      <section class="panel panel-visualizer" id="panel-viz">
+        <div class="panel-header">
+          Visualizer
+          <div class="viz-controls">
+            <button class="viz-btn active" data-mode="waveform">Waveform</button>
+            <button class="viz-btn" data-mode="spectrum">Spectrum</button>
+            <button class="viz-btn" data-mode="lissajous">Lissajous</button>
+          </div>
+        </div>
+        <canvas id="viz-canvas"></canvas>
+      </section>
+
+      <div id="osc-grid" class="osc-grid"></div>
+
+      <section class="panel" id="panel-adsr">
+        <div class="panel-header">Envelope (ADSR)</div>
+        <div class="panel-body">
+          <label class="knob-label">Attack
+            <input type="range" id="env-attack" class="knob-slider" min="0.001" max="2" step="0.001" value="0.01" />
+            <span class="knob-value" id="env-attack-val">0.01 s</span>
+          </label>
+          <label class="knob-label">Decay
+            <input type="range" id="env-decay" class="knob-slider" min="0.001" max="2" step="0.001" value="0.1" />
+            <span class="knob-value" id="env-decay-val">0.10 s</span>
+          </label>
+          <label class="knob-label">Sustain
+            <input type="range" id="env-sustain" class="knob-slider" min="0" max="1" step="0.01" value="0.7" />
+            <span class="knob-value" id="env-sustain-val">70%</span>
+          </label>
+          <label class="knob-label">Release
+            <input type="range" id="env-release" class="knob-slider" min="0.001" max="4" step="0.001" value="0.3" />
+            <span class="knob-value" id="env-release-val">0.30 s</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-keyboard">
+        <div class="panel-header">Play</div>
+        <div class="panel-body">
+          <div class="piano-wrap">
+            <div id="piano" class="piano"></div>
+          </div>
+          <p class="hint-text">Also: keyboard rows Z–/ and Q–P</p>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-lfo">
+        <div class="panel-header">LFO</div>
+        <div class="panel-body">
+          <label class="knob-label">Shape
+            <select id="lfo-shape" class="select-input">
+              <option value="sine">Sine</option>
+              <option value="triangle">Triangle</option>
+              <option value="square">Square</option>
+              <option value="sawtooth">Sawtooth</option>
+            </select>
+          </label>
+          <label class="knob-label">Rate
+            <input type="range" id="lfo-rate" class="knob-slider" min="0.01" max="20" step="0.01" value="1" />
+            <span class="knob-value" id="lfo-rate-val">1.00 Hz</span>
+          </label>
+          <label class="knob-label">Depth
+            <input type="range" id="lfo-depth" class="knob-slider" min="0" max="1" step="0.01" value="0" />
+            <span class="knob-value" id="lfo-depth-val">0%</span>
+          </label>
+          <label class="knob-label">Target
+            <select id="lfo-target" class="select-input">
+              <option value="frequency">Frequency (vibrato)</option>
+              <option value="gain">Amplitude (tremolo)</option>
+              <option value="filter">Filter Cutoff</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+    </aside>
+
+  </main>
+
+  <script src="javascript/audio.js"></script>
+  <script src="javascript/oscillators.js"></script>
+  <script src="javascript/processing.js"></script>
+  <script src="javascript/import.js"></script>
+  <script src="javascript/export.js"></script>
+  <script src="javascript/save.js"></script>
+</body>
+</html>
