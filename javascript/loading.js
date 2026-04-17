@@ -358,9 +358,9 @@
       gain.connect(probe.destination);
       osc.start();
       osc.stop(probe.currentTime + 0.001);
-      probe.resume().then(() => {
-        osc.disconnect(); gain.disconnect();
-        probe.close();
+      const _resumeTimeout = new Promise(res => setTimeout(res, 2000));
+      Promise.race([probe.resume(), _resumeTimeout]).then(() => {
+        try { osc.disconnect(); gain.disconnect(); probe.close(); } catch (_) {}
         _audioPreloaded = true;
         _setProgress(80);
         _checkDone();
@@ -402,6 +402,14 @@
     _ready = true;
     _checkDone();
   }
+
+  setTimeout(() => {
+    if (!_audioPreloaded || !_ready) {
+      _audioPreloaded = true;
+      _ready = true;
+      _checkDone();
+    }
+  }, 8000);
 
   window.NoscLoader = { dismiss: _dismiss };
 
